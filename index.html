@@ -3,151 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I.E.P.C - Igreja Evangélica Pentecostal Cristã</title>
+    <title>I.E.P.C</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="container">
-            <a href="#inicio" class="logo">I.E.P.C</a>
+            <a href="index.html" class="logo">I.E.P.C</a>
             <nav>
                 <ul>
-                    <li><a href="#midia">Mídia</a></li>
-                    <li><a href="#inicio">Início</a></li>
-                    <li><a href="#sobre">Sobre Nós</a></li>
-                    <li><a href="#cultos">Cultos</a></li>
-                    <li><a href="#ministerios">Ministérios</a></li>
-                    <li><a href="#eventos">Eventos</a></li>
-                    <li><a href="#biblia">Bíblia</a></li>
-                    <li><a href="#contato">Contato</a></li>
+                    <li><a href="midia.html">Mídia</a></li>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="sobre.html">Sobre Nós</a></li>
+                    <li><a href="cultos.html">Cultos</a></li>
+                    <li><a href="biblia.html">Bíblia</a></li>
+                    <li><a href="contato.html">Contato</a></li>
                 </ul>
             </nav>
-            <button id="dark-toggle" aria-label="Alternar modo escuro"><i class="fas fa-moon"></i></button>
+            <button id="dark-toggle"><i class="fas fa-moon"></i></button>
         </div>
     </header>
 
-    <!-- Hero -->
-    <section id="inicio" class="hero">
+    <section class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1 class="welcome">Seja Bem-vindo à I.E.P.C</h1>
             <p class="hero-subtitle">Igreja Evangélica Pentecostal Cristã<br>Uma família cheia da presença do Espírito Santo</p>
             <div class="hero-buttons">
-                <a href="#cultos" class="btn-white">Venha Nos Visitar</a>
-                <a href="#midia" class="btn-white">Assistir Ao Vivo</a>
+                <a href="cultos.html" class="btn-white">Venha Nos Visitar</a>
+                <a href="midia.html" class="btn-white">Assistir Ao Vivo</a>
             </div>
         </div>
     </section>
 
-    <!-- Sobre -->
-    <section id="sobre" class="section bg-light">
-        <div class="container">
-            <h2>Sobre a I.E.P.C</h2>
-            <p>Tudo começou com uma simples visita. Um dia, o pastor e sua família foram passear em Fazenda Rio Grande. Durante uma festa de confraternização, onde o ambiente não era ideal, o pastor sentiu o desejo de ir embora.</p>
-            <p>Quando se despediu do seu pai, o Espírito Santo tocou seu coração, dizendo que era hora de fazer uma oração. A oração foi feita, e logo em seguida, o pai do pastor também sentiu a necessidade de orar. Ali, no meio daquele momento, nasceu o desejo e a visão de começar uma célula naquele lugar.</p>
-            <p>De Célula a Igreja: a célula começou a ser levada uma vez por mês. Em uma vigília especial, Deus usou uma irmã que congregava no centro da cidade. Ela foi direcionada pelo Espírito Santo e profetizou a compra de um terreno para a igreja. Foi uma palavra de fé e direção!</p>
-            <p>Daí pra frente, com muita oração, esforço e trabalho missionário, a igreja cresceu em graça e poder, chegando aonde está hoje. É uma prova da fidelidade de Deus!</p>
-        </div>
-    </section>
-
-    <!-- Cultos -->
-    <section id="cultos" class="section">
-        <div class="container">
-            <h2>Horários dos Cultos</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>Todos os Domingos</h3>
-                    <p>Às 15:00 da tarde - Culto de Celebração</p>
-                </div>
-                <div class="card">
-                    <h3>Segundo Domingo do Mês</h3>
-                    <p>Às 10:00 da manhã - Culto com Santa Ceia</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Mídia -->
-    <section id="midia" class="section bg-light">
-        <div class="container">
-            <h2>Mídia</h2>
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="live">Ao Vivo</button>
-                <button class="tab-btn" data-tab="fotos">Fotos</button>
-                <button class="tab-btn" data-tab="videos">Vídeos</button>
-            </div>
-            <div id="live" class="tab-content active">
-                <iframe width="100%" height="500" src="" frameborder="0" allowfullscreen id="live-frame"></iframe>
-                <p id="no-live" style="display:none;">Nenhuma transmissão ao vivo no momento.</p>
-            </div>
-            <div id="fotos" class="tab-content">
-                <div class="gallery-grid" id="gallery"></div>
-            </div>
-            <div id="videos" class="tab-content">
-                <div class="video-grid" id="video-list"></div>
-            </div>
-            <button id="adm-btn">Área ADM</button>
-        </div>
-    </section>
-
-    <!-- Painel ADM (escondido) -->
-    <div id="adm-panel" class="adm-panel">
-        <h3>Área Administrativa</h3>
-        <input type="password" id="adm-password" placeholder="Senha">
-        <button id="adm-login">Entrar</button>
-        <div id="adm-content" style="display:none;">
-            <h4>Live YouTube</h4>
-            <input type="text" id="live-link" placeholder="Link embed YouTube (ex: https://www.youtube.com/embed/ID)">
-            <button id="save-live">Salvar Live</button>
-            
-            <h4>Adicionar Foto</h4>
-            <input type="text" id="foto-url" placeholder="URL da imagem (suba em images/)">
-            <input type="text" id="foto-title" placeholder="Título (opcional)">
-            <button id="add-foto">Adicionar</button>
-            
-            <h4>Adicionar Vídeo</h4>
-            <input type="text" id="video-url" placeholder="Link embed YouTube">
-            <input type="text" id="video-title" placeholder="Título do sermão">
-            <button id="add-video">Adicionar</button>
-        </div>
-    </div>
-
-    <!-- Outras seções (Ministérios, Eventos, Bíblia, Contato) -->
-    <section id="ministerios" class="section">
-        <div class="container">
-            <h2>Ministérios</h2>
-            <p>(Adicione aqui os ministérios da igreja)</p>
-        </div>
-    </section>
-
-    <section id="eventos" class="section bg-light">
-        <div class="container">
-            <h2>Próximos Eventos</h2>
-            <p>(Adicione eventos aqui)</p>
-        </div>
-    </section>
-
-    <section id="biblia" class="section">
-        <div class="container">
-            <h2>Bíblia Online - Almeida Revista e Atualizada</h2>
-            <iframe src="https://www.bibliaonline.com.br/ara" width="100%" height="800" frameborder="0"></iframe>
-        </div>
-    </section>
-
-    <section id="contato" class="section bg-light">
-        <div class="container">
-            <h2>Contato</h2>
-            <p>Endereço: Final da Rua Curitiba, 2209 - Fazenda Rio Grande/PR</p>
-            <p>Telefone: (colocar número aqui)</p>
-            <a href="https://wa.me/55SEUNUMERO" class="btn-white">WhatsApp</a>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3602.5!2d-49.308!3d-25.66!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dcf0e0f0e0f0e0%3A0xexample!2sR.%20Curitiba%2C%202209%20-%20Fazenda%20Rio%20Grande%2C%20PR!5e0!3m2!1spt-BR!2sbr" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-        </div>
-    </section>
-
-    <!-- Botão voltar ao topo -->
+    <a href="index.html" class="back-home"><i class="fas fa-home"></i></a>
     <button id="topo"><i class="fas fa-arrow-up"></i></button>
 
     <script src="script.js"></script>
