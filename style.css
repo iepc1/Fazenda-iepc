@@ -55,7 +55,15 @@ h2 { font-size:2.5rem; margin-bottom:40px; color:var(--accent); }
 .back-home { position:fixed; bottom:30px; left:30px; background:var(--accent); color:white; width:60px; height:60px; border-radius:50%; border:none; font-size:2rem; box-shadow:0 6px 20px rgba(233,30,99,0.5); z-index:999; cursor:pointer; }
 
 #topo { position:fixed; bottom:30px; right:30px; background:var(--accent); color:white; width:60px; height:60px; border-radius:50%; border:none; font-size:2rem; box-shadow:0 6px 20px rgba(233,30,99,0.5); display:none; z-index:999; cursor:pointer; }
+nav ul {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 20px; /* espaço pra dedo arrastar */
+}
 
+nav a {
+    flex-shrink: 0; /* impede que os botões encolham */
+}
 @media (max-width:768px) {
     .welcome { font-size:4rem; }
 }
