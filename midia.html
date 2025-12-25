@@ -49,6 +49,7 @@
 
     <div id="adm-panel" class="adm-panel">
         <h3>Área Administrativa</h3>
+        <button id="adm-close" style="position:absolute; top:10px; right:10px; background:none; border:none; color:white; font-size:2rem; cursor:pointer;">×</button>
         <input type="password" id="adm-password" placeholder="Senha">
         <button id="adm-login">Entrar</button>
         <div id="adm-content" style="display:none;">
@@ -57,13 +58,16 @@
             <button id="save-live">Salvar Live</button>
             
             <h4>Adicionar Foto</h4>
-            <input type="text" id="foto-url" placeholder="URL da imagem (ex: https://i.imgur.com/abc.jpg)">
+            <input type="text" id="foto-url" placeholder="URL da imagem">
             <button id="add-foto">Adicionar Foto</button>
             
             <h4>Adicionar Vídeo</h4>
             <input type="text" id="video-url" placeholder="Link embed YouTube">
-            <input type="text" id="video-title" placeholder="Título do vídeo">
+            <input type="text" id="video-title" placeholder="Título">
             <button id="add-video">Adicionar Vídeo</button>
+            
+            <h4>Remover Fotos</h4>
+            <button id="remove-all-fotos" style="background:#c2185b; color:white;">Remover Todas as Fotos</button>
         </div>
     </div>
 
@@ -88,12 +92,17 @@
         // Área ADM
         const admBtn = document.getElementById('adm-btn');
         const admPanel = document.getElementById('adm-panel');
+        const admClose = document.getElementById('adm-close');
         const admPassword = document.getElementById('adm-password');
         const admLogin = document.getElementById('adm-login');
         const admContent = document.getElementById('adm-content');
 
         admBtn.addEventListener('click', () => {
             admPanel.style.display = 'block';
+        });
+
+        admClose.addEventListener('click', () => {
+            admPanel.style.display = 'none';
         });
 
         admLogin.addEventListener('click', () => {
@@ -104,31 +113,25 @@
             }
         });
 
-        // Função pra carregar mídia salva
+        // Load Media (mesmo de antes)
         function loadMedia() {
-            // Live
             const liveLink = localStorage.getItem('live-link') || '';
             if (liveLink) {
                 document.getElementById('live-frame').src = liveLink;
                 document.getElementById('no-live').style.display = 'none';
             }
 
-            // Fotos
             const gallery = document.getElementById('gallery');
             gallery.innerHTML = '';
-            const fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
-            fotos.forEach(url => {
+            JSON.parse(localStorage.getItem('fotos') || '[]').forEach(f => {
                 const img = document.createElement('img');
-                img.src = url;
-                img.alt = 'Foto da igreja';
+                img.src = f;
                 gallery.appendChild(img);
             });
 
-            // Vídeos
             const videoList = document.getElementById('video-list');
             videoList.innerHTML = '';
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            videos.forEach(v => {
+            JSON.parse(localStorage.getItem('videos') || '[]').forEach(v => {
                 const p = document.createElement('p');
                 p.textContent = v.title;
                 const iframe = document.createElement('iframe');
@@ -141,49 +144,43 @@
             });
         }
 
-        // Salvar Live
+        // Save Live
         document.getElementById('save-live').addEventListener('click', () => {
-            const link = document.getElementById('live-link').value.trim();
-            if (link) {
-                localStorage.setItem('live-link', link);
-                loadMedia();
-                alert('Live salva com sucesso!');
-            }
+            localStorage.setItem('live-link', document.getElementById('live-link').value);
+            loadMedia();
         });
 
-        // Adicionar Foto
+        // Add Foto
         document.getElementById('add-foto').addEventListener('click', () => {
-            const url = document.getElementById('foto-url').value.trim();
+            const url = document.getElementById('foto-url').value;
             if (url) {
                 const fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
                 fotos.push(url);
                 localStorage.setItem('fotos', JSON.stringify(fotos));
                 loadMedia();
-                document.getElementById('foto-url').value = '';
-                alert('Foto adicionada com sucesso!');
-            } else {
-                alert('Coloque um link válido da imagem!');
             }
         });
 
-        // Adicionar Vídeo
+        // Add Video
         document.getElementById('add-video').addEventListener('click', () => {
-            const url = document.getElementById('video-url').value.trim();
-            const title = document.getElementById('video-title').value.trim() || 'Sermão';
+            const url = document.getElementById('video-url').value;
+            const title = document.getElementById('video-title').value || 'Sermão';
             if (url) {
                 const videos = JSON.parse(localStorage.getItem('videos') || '[]');
                 videos.push({url, title});
                 localStorage.setItem('videos', JSON.stringify(videos));
                 loadMedia();
-                document.getElementById('video-url').value = '';
-                document.getElementById('video-title').value = '';
-                alert('Vídeo adicionado com sucesso!');
-            } else {
-                alert('Coloque o link embed do vídeo!');
             }
         });
 
-        // Carrega tudo ao abrir a página
+        // Remover Todas as Fotos (nova função)
+        document.getElementById('remove-all-fotos').addEventListener('click', () => {
+            if (confirm('Tem certeza que quer remover todas as fotos?')) {
+                localStorage.removeItem('fotos');
+                loadMedia();
+            }
+        });
+
         loadMedia();
     </script>
 </body>
