@@ -19,7 +19,6 @@
                     <li><a href="sobre.html">Sobre Nós</a></li>
                     <li><a href="cultos.html">Cultos</a></li>
                     <li><a href="biblia.html">Bíblia</a></li>
-                    <li><a href="contato.html">Contato</a></li>
                 </ul>
             </nav>
             <button id="dark-toggle"><i class="fas fa-moon"></i></button>
@@ -58,13 +57,13 @@
             <button id="save-live">Salvar Live</button>
             
             <h4>Adicionar Foto</h4>
-            <input type="text" id="foto-url" placeholder="URL da imagem">
-            <button id="add-foto">Adicionar</button>
+            <input type="text" id="foto-url" placeholder="URL da imagem (ex: https://i.imgur.com/abc.jpg)">
+            <button id="add-foto">Adicionar Foto</button>
             
             <h4>Adicionar Vídeo</h4>
             <input type="text" id="video-url" placeholder="Link embed YouTube">
-            <input type="text" id="video-title" placeholder="Título">
-            <button id="add-video">Adicionar</button>
+            <input type="text" id="video-title" placeholder="Título do vídeo">
+            <button id="add-video">Adicionar Vídeo</button>
         </div>
     </div>
 
@@ -105,25 +104,31 @@
             }
         });
 
-        // Carregar conteúdo salvo (live, fotos, vídeos)
+        // Função pra carregar mídia salva
         function loadMedia() {
+            // Live
             const liveLink = localStorage.getItem('live-link') || '';
             if (liveLink) {
                 document.getElementById('live-frame').src = liveLink;
                 document.getElementById('no-live').style.display = 'none';
             }
 
+            // Fotos
             const gallery = document.getElementById('gallery');
             gallery.innerHTML = '';
-            JSON.parse(localStorage.getItem('fotos') || '[]').forEach(f => {
+            const fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
+            fotos.forEach(url => {
                 const img = document.createElement('img');
-                img.src = f;
+                img.src = url;
+                img.alt = 'Foto da igreja';
                 gallery.appendChild(img);
             });
 
+            // Vídeos
             const videoList = document.getElementById('video-list');
             videoList.innerHTML = '';
-            JSON.parse(localStorage.getItem('videos') || '[]').forEach(v => {
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            videos.forEach(v => {
                 const p = document.createElement('p');
                 p.textContent = v.title;
                 const iframe = document.createElement('iframe');
@@ -136,32 +141,49 @@
             });
         }
 
+        // Salvar Live
         document.getElementById('save-live').addEventListener('click', () => {
-            localStorage.setItem('live-link', document.getElementById('live-link').value);
-            loadMedia();
+            const link = document.getElementById('live-link').value.trim();
+            if (link) {
+                localStorage.setItem('live-link', link);
+                loadMedia();
+                alert('Live salva com sucesso!');
+            }
         });
 
+        // Adicionar Foto
         document.getElementById('add-foto').addEventListener('click', () => {
-            const url = document.getElementById('foto-url').value;
+            const url = document.getElementById('foto-url').value.trim();
             if (url) {
                 const fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
                 fotos.push(url);
                 localStorage.setItem('fotos', JSON.stringify(fotos));
                 loadMedia();
+                document.getElementById('foto-url').value = '';
+                alert('Foto adicionada com sucesso!');
+            } else {
+                alert('Coloque um link válido da imagem!');
             }
         });
 
+        // Adicionar Vídeo
         document.getElementById('add-video').addEventListener('click', () => {
-            const url = document.getElementById('video-url').value;
-            const title = document.getElementById('video-title').value || 'Sermão';
+            const url = document.getElementById('video-url').value.trim();
+            const title = document.getElementById('video-title').value.trim() || 'Sermão';
             if (url) {
                 const videos = JSON.parse(localStorage.getItem('videos') || '[]');
                 videos.push({url, title});
                 localStorage.setItem('videos', JSON.stringify(videos));
                 loadMedia();
+                document.getElementById('video-url').value = '';
+                document.getElementById('video-title').value = '';
+                alert('Vídeo adicionado com sucesso!');
+            } else {
+                alert('Coloque o link embed do vídeo!');
             }
         });
 
+        // Carrega tudo ao abrir a página
         loadMedia();
     </script>
 </body>
