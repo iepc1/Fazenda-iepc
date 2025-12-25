@@ -1,23 +1,24 @@
+// Dark Mode
 const darkToggle = document.getElementById('dark-toggle');
+const body = document.body;
+
 if (localStorage.getItem('dark-mode') === 'light') {
-    document.body.style.background = '#f8f9fa';
-    document.body.style.color = '#333';
+    body.classList.add('light');
     darkToggle.innerHTML = '<i class="fas fa-sun"></i>';
 }
+
 darkToggle.addEventListener('click', () => {
-    if (document.body.style.background === '#f8f9fa') {
-        document.body.style.background = '#000814';
-        document.body.style.color = '#ffffff';
-        localStorage.setItem('dark-mode', 'dark');
-        darkToggle.innerHTML = '<i class="fas fa-moon"></i>';
-    } else {
-        document.body.style.background = '#f8f9fa';
-        document.body.style.color = '#333';
+    body.classList.toggle('light');
+    if (body.classList.contains('light')) {
         localStorage.setItem('dark-mode', 'light');
         darkToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        localStorage.setItem('dark-mode', 'dark');
+        darkToggle.innerHTML = '<i class="fas fa-moon"></i>';
     }
 });
 
+// Voltar ao topo
 const topoBtn = document.getElementById('topo');
 window.addEventListener('scroll', () => {
     if (window.scrollY > 300) topoBtn.style.display = 'block';
