@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I.E.P.C - Igreja Evangélica Pentecostal Cristã</title>
-    <link rel="manifest" href="manifest.json"> <!-- ESSA LINHA É ESSENCIAL -->
+    <title>I.E.P.C</title>
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#e91e63">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -37,6 +37,16 @@
                 <a href="cultos.html" class="btn-white">Venha Nos Visitar</a>
                 <a href="midia.html" class="btn-white">Assistir Ao Vivo</a>
             </div>
+        </div>
+    </section>
+
+    <!-- Versículo do Dia -->
+    <section class="section verse-section">
+        <div class="container">
+            <h2>Versículo do Dia</h2>
+            <p id="verse-text" class="verse-text"></p>
+            <p id="verse-ref" class="verse-ref"></p>
+            <button onclick="shareVerse()" class="btn-white">Compartilhar Versículo</button>
         </div>
     </section>
 
