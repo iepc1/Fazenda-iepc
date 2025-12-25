@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mídia - I.E.P.C</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -49,7 +49,23 @@
     </section>
 
     <div id="adm-panel" class="adm-panel">
-        <!-- (código ADM completo do anterior) -->
+        <h3>Área Administrativa</h3>
+        <input type="password" id="adm-password" placeholder="Senha">
+        <button id="adm-login">Entrar</button>
+        <div id="adm-content" style="display:none;">
+            <h4>Live YouTube</h4>
+            <input type="text" id="live-link" placeholder="Link embed (ex: https://www.youtube.com/embed/ID)">
+            <button id="save-live">Salvar Live</button>
+            
+            <h4>Adicionar Foto</h4>
+            <input type="text" id="foto-url" placeholder="URL da imagem">
+            <button id="add-foto">Adicionar</button>
+            
+            <h4>Adicionar Vídeo</h4>
+            <input type="text" id="video-url" placeholder="Link embed YouTube">
+            <input type="text" id="video-title" placeholder="Título">
+            <button id="add-video">Adicionar</button>
+        </div>
     </div>
 
     <a href="index.html" class="back-home"><i class="fas fa-home"></i></a>
@@ -57,9 +73,96 @@
 
     <script src="script.js"></script>
     <script>
-        // (código das abas e ADM completo do anterior aqui)
+        // Abas da Mídia
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Área ADM
+        const admBtn = document.getElementById('adm-btn');
+        const admPanel = document.getElementById('adm-panel');
+        const admPassword = document.getElementById('adm-password');
+        const admLogin = document.getElementById('adm-login');
+        const admContent = document.getElementById('adm-content');
+
+        admBtn.addEventListener('click', () => {
+            admPanel.style.display = 'block';
+        });
+
+        admLogin.addEventListener('click', () => {
+            if (admPassword.value === 'IEPC') {
+                admContent.style.display = 'block';
+            } else {
+                alert('Senha incorreta!');
+            }
+        });
+
+        // Carregar conteúdo salvo (live, fotos, vídeos)
+        function loadMedia() {
+            const liveLink = localStorage.getItem('live-link') || '';
+            if (liveLink) {
+                document.getElementById('live-frame').src = liveLink;
+                document.getElementById('no-live').style.display = 'none';
+            }
+
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+            JSON.parse(localStorage.getItem('fotos') || '[]').forEach(f => {
+                const img = document.createElement('img');
+                img.src = f;
+                gallery.appendChild(img);
+            });
+
+            const videoList = document.getElementById('video-list');
+            videoList.innerHTML = '';
+            JSON.parse(localStorage.getItem('videos') || '[]').forEach(v => {
+                const p = document.createElement('p');
+                p.textContent = v.title;
+                const iframe = document.createElement('iframe');
+                iframe.src = v.url;
+                iframe.width = '100%';
+                iframe.height = '315';
+                iframe.allowFullscreen = true;
+                videoList.appendChild(p);
+                videoList.appendChild(iframe);
+            });
+        }
+
+        document.getElementById('save-live').addEventListener('click', () => {
+            localStorage.setItem('live-link', document.getElementById('live-link').value);
+            loadMedia();
+        });
+
+        document.getElementById('add-foto').addEventListener('click', () => {
+            const url = document.getElementById('foto-url').value;
+            if (url) {
+                const fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
+                fotos.push(url);
+                localStorage.setItem('fotos', JSON.stringify(fotos));
+                loadMedia();
+            }
+        });
+
+        document.getElementById('add-video').addEventListener('click', () => {
+            const url = document.getElementById('video-url').value;
+            const title = document.getElementById('video-title').value || 'Sermão';
+            if (url) {
+                const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+                videos.push({url, title});
+                localStorage.setItem('videos', JSON.stringify(videos));
+                loadMedia();
+            }
+        });
+
+        loadMedia();
     </script>
 </body>
 </html>
-<meta name="screen-orientation" content="landscape">
-<meta name="mobile-web-app-capable" content="yes">
