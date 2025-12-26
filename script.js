@@ -26,7 +26,7 @@ window.addEventListener('scroll', () => {
 });
 topoBtn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
 
-// 60 Versículos do Dia (loop – volta pro 1 depois do 60)
+// 60 Versículos do Dia (loop)
 const verses = [
     {text: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.", ref: "João 3:16"},
     {text: "O Senhor é o meu pastor; nada me faltará.", ref: "Salmos 23:1"},
@@ -92,11 +92,10 @@ const verses = [
     {text: "O Senhor é o meu escudo e a minha glória.", ref: "Salmos 3:3"}
 ];
 
-// Função pra mostrar o versículo
 function showVerse() {
-    if (document.getElementById('verse-text') && document.getElementById('verse-ref')) {
+    if (document.getElementById('verse-text')) {
         const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-        const index = (dayOfYear - 1) % verses.length; // Loop de 0 a 59
+        const index = (dayOfYear - 1) % verses.length;
         const verse = verses[index];
         document.getElementById('verse-text').textContent = verse.text;
         document.getElementById('verse-ref').textContent = verse.ref;
@@ -112,7 +111,57 @@ function shareVerse() {
     }
 }
 
-// Executa quando a página carrega
-window.addEventListener('load', showVerse);
+// Notificações (permissão)
+if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+}
 
-// Outras funções (notificações, etc.) – mantenha as que você já tem
+function notify(title, body) {
+    if (Notification.permission === 'granted') {
+        new Notification(title, {body: body, icon: 'images/icon-192.png'});
+    }
+}
+
+// Lembretes espirituais diários (sem domingo e sexta específicos)
+function checkReminders() {
+    const hour = new Date().getHours();
+
+    if (hour === 7) {
+        notify("Bom dia!", "Levante e ore! Deus tem uma bênção pra você hoje.");
+    }
+
+    if (hour === 10) {
+        notify("10h - Hora de buscar!", "Já orou hoje? Pare um momento e fale com o Pai.");
+    }
+
+    if (hour === 12) {
+        notify("12h - Meio-dia!", "Já estudou a Bíblia hoje? Abra a Palavra e se alimente.");
+    }
+
+    if (hour === 14) {
+        notify("14h - Tarde!", "Já fez seu devocional? O Senhor tem uma palavra pra você agora.");
+    }
+
+    if (hour === 16) {
+        notify("16h - Renovação!", "Já agradeceu a Deus hoje? Ele é fiel!");
+    }
+
+    if (hour === 18) {
+        notify("18h - Fim de tarde!", "Já meditou na Palavra? Prepare seu coração pra noite.");
+    }
+
+    if (hour === 20) {
+        notify("20h - Noite!", "Já orou pela família? Cubra todos com oração.");
+    }
+
+    if (hour === 22) {
+        notify("22h - Hora de descansar!", "Já fez sua oração da noite? Entregue o dia ao Senhor.");
+    }
+}
+
+// Executa ao carregar e a cada minuto
+showVerse();
+checkReminders();
+setInterval(checkReminders, 60000); // Verifica a cada minuto
+
+window.addEventListener('load', showVerse);
