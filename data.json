@@ -1,8 +1,16 @@
-
 {
   "live": "",
   "fotos": [
     "https://i.postimg.cc/NfPFPS21/IMG-20251221-WA0029.jpg"
   ],
-  "videos": [ 
-"https://i.postimg.cc/NfPFPS21/IMG-20251221-WA0029.jpg"   ],
+  "videos": [
+    {
+      "url": "https://youtube.com/shorts/1S6PuGKI1II?si=t2QWrn4VLgeGtQpM",
+      "title": "Comercial da igreja"
+    },
+    {
+      "url": "https://youtube.com/shorts/1S6PuGKI1II?si=t2QWrn4VLgeGtQpM",
+      "title": "Comercial da igreja olhe e compartilhe"
+    }
+  ]
+}
