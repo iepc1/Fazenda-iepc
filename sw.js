@@ -1,4 +1,4 @@
-const CACHE_NAME = 'iepc-app-v10'; // mude o número (v10, v11...) toda vez que quiser forçar atualização
+const CACHE_NAME = 'iepc-app-v11'; // mude o número (v10, v11...) toda vez que quiser forçar atualização
 
 const FILES_TO_CACHE = [
   '/',
