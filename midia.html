@@ -81,25 +81,6 @@
         const REPO = 'iepc1/Fazenda-iepc';
         const FILE_PATH = 'data.json';
 
-        // Inicializa o data.json se não existir
-        async function initDataIfNeeded() {
-            const response = await fetch(`https://api.github.com/repos/\( {REPO}/contents/ \){FILE_PATH}`);
-            if (response.status === 404) {
-                // Cria o arquivo se não existir
-                await fetch(`https://api.github.com/repos/\( {REPO}/contents/ \){FILE_PATH}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: 'Criar data.json inicial para Mídia I.E.P.C',
-                        content: btoa('{"live":"","fotos":[],"videos":[]}')
-                    })
-                });
-            }
-        }
-
         // Carrega os dados
         async function loadData() {
             try {
@@ -110,6 +91,9 @@
                 if (content.live) {
                     document.getElementById('live-frame').src = content.live;
                     document.getElementById('no-live').style.display = 'none';
+                } else {
+                    document.getElementById('live-frame').src = '';
+                    document.getElementById('no-live').style.display = 'block';
                 }
 
                 // Fotos
@@ -118,6 +102,7 @@
                 content.fotos.forEach(url => {
                     const img = document.createElement('img');
                     img.src = url;
+                    img.alt = 'Foto da igreja';
                     gallery.appendChild(img);
                 });
 
@@ -126,7 +111,7 @@
                 videoList.innerHTML = '';
                 content.videos.forEach(v => {
                     const p = document.createElement('p');
-                    p.textContent = v.title;
+                    p.textContent = v.title || 'Sermão';
                     const iframe = document.createElement('iframe');
                     iframe.src = v.url;
                     iframe.width = '100%';
@@ -136,32 +121,60 @@
                     videoList.appendChild(iframe);
                 });
             } catch (e) {
-                console.log('Carregando...');
+                console.log('Carregando dados...');
             }
         }
 
         // Salva no GitHub
         async function saveData(newData) {
-            const response = await fetch(`https://api.github.com/repos/\( {REPO}/contents/ \){FILE_PATH}`);
-            const file = await response.json();
-            const sha = file.sha;
+            try {
+                const response = await fetch(`https://api.github.com/repos/\( {REPO}/contents/ \){FILE_PATH}`);
+                const file = await response.json();
+                const sha = file.sha;
 
-            await fetch(`https://api.github.com/repos/\( {REPO}/contents/ \){FILE_PATH}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: 'Atualização Mídia I.E.P.C',
-                    content: btoa(unescape(encodeURIComponent(JSON.stringify(newData)))),
-                    sha: sha
-                })
-            });
-            loadData();
+                await fetch(`https://api.github.com/repos/\( {REPO}/contents/ \){FILE_PATH}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Atualização Mídia I.E.P.C',
+                        content: btoa(unescape(encodeURIComponent(JSON.stringify(newData)))),
+                        sha: sha
+                    })
+                });
+                alert('Adicionado com sucesso! Atualiza em 1-2 minutos em outros dispositivos.');
+                loadData();
+            } catch (e) {
+                alert('Erro ao salvar. Verifique o token ou console.');
+                console.error(e);
+            }
         }
 
-        // Área ADM (mesmo de antes)
+        // Área ADM
+        const admBtn = document.getElementById('adm-btn');
+        const admPanel = document.getElementById('adm-panel');
+        const admClose = document.getElementById('adm-close');
+        const admPassword = document.getElementById('adm-password');
+        const admLogin = document.getElementById('adm-login');
+        const admContent = document.getElementById('adm-content');
+
+        admBtn.addEventListener('click', () => {
+            admPanel.style.display = 'block';
+        });
+
+        admClose.addEventListener('click', () => {
+            admPanel.style.display = 'none';
+        });
+
+        admLogin.addEventListener('click', () => {
+            if (admPassword.value === 'IEPC') {
+                admContent.style.display = 'block';
+            } else {
+                alert('Senha incorreta!');
+            }
+        });
 
         // Salvar Live
         document.getElementById('save-live').addEventListener('click', async () => {
@@ -171,44 +184,51 @@
                 const content = await response.json();
                 content.live = link;
                 await saveData(content);
+                document.getElementById('live-link').value = '';
             }
         });
 
-        // Add Foto
+        // Adicionar Foto
         document.getElementById('add-foto').addEventListener('click', async () => {
             const url = document.getElementById('foto-url').value.trim();
             if (url) {
                 const response = await fetch(`https://raw.githubusercontent.com/\( {REPO}/main/ \){FILE_PATH}`);
                 const content = await response.json();
+                content.fotos = content.fotos || [];
                 content.fotos.push(url);
                 await saveData(content);
                 document.getElementById('foto-url').value = '';
+            } else {
+                alert('Coloque um link válido!');
             }
         });
 
-        // Add Video
+        // Adicionar Vídeo
         document.getElementById('add-video').addEventListener('click', async () => {
             const url = document.getElementById('video-url').value.trim();
             const title = document.getElementById('video-title').value.trim() || 'Sermão';
             if (url) {
                 const response = await fetch(`https://raw.githubusercontent.com/\( {REPO}/main/ \){FILE_PATH}`);
                 const content = await response.json();
+                content.videos = content.videos || [];
                 content.videos.push({url, title});
                 await saveData(content);
                 document.getElementById('video-url').value = '';
                 document.getElementById('video-title').value = '';
+            } else {
+                alert('Coloque o link embed do vídeo!');
             }
         });
 
         // Limpar tudo
         document.getElementById('remove-all').addEventListener('click', async () => {
-            if (confirm('Limpar tudo?')) {
+            if (confirm('Limpar tudo (live, fotos e vídeos)?')) {
                 await saveData({live: '', fotos: [], videos: []});
             }
         });
 
-        // Inicializa e carrega
-        initDataIfNeeded().then(loadData);
+        // Carrega ao abrir e a cada minuto
+        loadData();
         setInterval(loadData, 60000);
     </script>
 </body>
