@@ -47,10 +47,10 @@
         </div>
     </section>
 
-    <!-- Mensagem de atualização PWA -->
-    <div id="update-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#e91e63; color:white; padding:15px; text-align:center; z-index:1000;">
+    <!-- Banner de atualização PWA -->
+    <div id="update-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#e91e63; color:white; padding:15px; text-align:center; z-index:1000; font-size:14px;">
         <p>Existem atualizações pendentes. Deseja atualizar agora?</p>
-        <button id="update-now" style="background:white; color:#e91e63; border:none; padding:10px 20px; margin:5px; cursor:pointer;">Atualizar</button>
+        <button id="update-now" style="background:white; color:#e91e63; border:none; padding:10px 20px; margin:5px; cursor:pointer; font-weight:bold;">Atualizar</button>
         <button id="update-later" style="background:transparent; color:white; border:1px solid white; padding:10px 20px; margin:5px; cursor:pointer;">Depois</button>
     </div>
 
@@ -187,11 +187,12 @@
 
         // Área ADM (close, login, abas etc – mesmo de antes)
 
-        // PWA atualização automática
-        let newWorker;
+        // PWA atualização
         const updateBanner = document.getElementById('update-banner');
         const updateNow = document.getElementById('update-now');
         const updateLater = document.getElementById('update-later');
+
+        let newWorker;
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').then(reg => {
