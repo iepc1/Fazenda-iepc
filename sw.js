@@ -1,4 +1,4 @@
-const CACHE_NAME = 'iepc-app-v11'; // mude o número (v10, v11...) toda vez que quiser forçar atualização
+const CACHE_NAME = 'iepc-app-v10'; // mude pra v11, v12 quando atualizar o código
 
 const FILES_TO_CACHE = [
   '/',
@@ -32,6 +32,12 @@ self.addEventListener('activate', event => {
     })
   );
   self.clients.claim();
+});
+
+self.addEventListener('message', event => {
+  if (event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('fetch', event => {
