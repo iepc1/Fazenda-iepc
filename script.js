@@ -118,11 +118,11 @@ if ('Notification' in window && Notification.permission === 'default') {
 
 function notify(title, body) {
     if (Notification.permission === 'granted') {
-        new Notification(title, {body: body, icon: 'images/icon-192.png'});
+        new Notification(title, {body: body, icon: 'android-launchericon-192-192.png'});
     }
 }
 
-// Lembretes espirituais diários (sem domingo e sexta específicos)
+// Lembretes espirituais diários
 function checkReminders() {
     const hour = new Date().getHours();
 
@@ -159,7 +159,7 @@ function checkReminders() {
     }
 }
 
-// Executa ao carregar e a cada minuto
+// Executa ao carregar
 showVerse();
 checkReminders();
 setInterval(checkReminders, 60000); // Verifica a cada minuto
