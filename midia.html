@@ -34,7 +34,7 @@
                 <button class="tab-btn" data-tab="videos">Vídeos</button>
             </div>
             <div id="live" class="tab-content active">
-                <iframe width="100%" height="500" src="" frameborder="0" allowfullscreen id="live-frame"></iframe>
+                <iframe width="100%" height="500" src="" frameborder="0" allowfullscreen allow="autoplay; encrypted-media" id="live-frame"></iframe>
                 <p id="no-live">Nenhuma transmissão ao vivo no momento.</p>
             </div>
             <div id="fotos" class="tab-content">
@@ -44,7 +44,6 @@
                 <div class="video-grid" id="video-list"></div>
             </div>
             <button id="adm-btn">Área ADM</button>
-            <button id="refresh-btn" style="margin-top:10px; background:#28a745; color:white; padding:10px; border:none; cursor:pointer;">Atualizar agora</button>
         </div>
     </section>
 
@@ -63,11 +62,11 @@
             <button id="add-foto">Adicionar Foto</button>
             
             <h4>Adicionar Vídeo</h4>
-            <input type="text" id="video-url" placeholder="Link embed">
+            <input type="text" id="video-url" placeholder="Link embed (Vimeo ou YouTube)">
             <input type="text" id="video-title" placeholder="Título">
             <button id="add-video">Adicionar Vídeo</button>
             
-            <h4>Sync em todos os celulares</h4>
+            <h4>Sync em todos</h4>
             <button id="generate-sync" style="background:#28a745; color:white;">Gerar código pra sync</button>
             
             <h4>Remover</h4>
@@ -80,92 +79,18 @@
 
     <script src="script.js"></script>
     <script>
-        // Carrega do GitHub (sync em todos)
-        async function loadFromGitHub() {
-            try {
-                const response = await fetch(`https://raw.githubusercontent.com/iepc1/Fazenda-iepc/main/data.json?t=${new Date().getTime()}`);
-                const content = await response.json();
+        // Abas da Mídia
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
 
-                // Live
-                if (content.live) {
-                    document.getElementById('live-frame').src = content.live;
-                    document.getElementById('no-live').style.display = 'none';
-                } else {
-                    document.getElementById('live-frame').src = '';
-                    document.getElementById('no-live').style.display = 'block';
-                }
-
-                // Fotos
-                const gallery = document.getElementById('gallery');
-                gallery.innerHTML = '';
-                content.fotos.forEach(url => {
-                    const img = document.createElement('img');
-                    img.src = url;
-                    gallery.appendChild(img);
-                });
-
-                // Vídeos
-                const videoList = document.getElementById('video-list');
-                videoList.innerHTML = '';
-                content.videos.forEach(v => {
-                    const p = document.createElement('p');
-                    p.textContent = v.title || 'Sermão';
-                    const iframe = document.createElement('iframe');
-                    iframe.src = v.url;
-                    iframe.width = '100%';
-                    iframe.height = '315';
-                    iframe.allowFullscreen = true;
-                    videoList.appendChild(p);
-                    videoList.appendChild(iframe);
-                });
-            } catch (e) {
-                console.log('Carregando do GitHub...');
-            }
-        }
-
-        // Carrega do localStorage (pra ADM ver na hora)
-        function loadFromLocal() {
-            const liveLink = localStorage.getItem('live-link') || '';
-            if (liveLink) {
-                document.getElementById('live-frame').src = liveLink;
-                document.getElementById('no-live').style.display = 'none';
-            }
-
-            const gallery = document.getElementById('gallery');
-            const fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
-            fotos.forEach(url => {
-                const img = document.createElement('img');
-                img.src = url;
-                gallery.appendChild(img);
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
             });
-
-            const videoList = document.getElementById('video-list');
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            videos.forEach(v => {
-                const p = document.createElement('p');
-                p.textContent = v.title || 'Sermão';
-                const iframe = document.createElement('iframe');
-                iframe.src = v.url;
-                iframe.width = '100%';
-                iframe.height = '315';
-                iframe.allowFullscreen = true;
-                videoList.appendChild(p);
-                videoList.appendChild(iframe);
-            });
-        }
-
-        // Carrega do GitHub e local
-        loadFromGitHub();
-        loadFromLocal();
-
-        // Botão "Atualizar agora" – força atualização do GitHub
-        document.getElementById('refresh-btn').addEventListener('click', () => {
-            loadFromGitHub();
-            alert('Atualizado! As novidades foram carregadas.');
         });
-
-        // Atualiza do GitHub a cada minuto
-        setInterval(loadFromGitHub, 60000);
 
         // Área ADM
         const admBtn = document.getElementById('adm-btn');
@@ -192,14 +117,58 @@
             }
         });
 
+        // Carrega mídia salva (localStorage)
+        function loadMedia() {
+            // Live
+            const liveLink = localStorage.getItem('live-link') || '';
+            if (liveLink) {
+                document.getElementById('live-frame').src = liveLink;
+                document.getElementById('no-live').style.display = 'none';
+            } else {
+                document.getElementById('live-frame').src = '';
+                document.getElementById('no-live').style.display = 'block';
+            }
+
+            // Fotos
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+            const fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
+            fotos.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'Foto da igreja';
+                gallery.appendChild(img);
+            });
+
+            // Vídeos (iframe com atributos pra Vimeo funcionar)
+            const videoList = document.getElementById('video-list');
+            videoList.innerHTML = '';
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            videos.forEach(v => {
+                const p = document.createElement('p');
+                p.textContent = v.title || 'Sermão';
+                const iframe = document.createElement('iframe');
+                iframe.src = v.url;
+                iframe.width = '100%';
+                iframe.height = '315';
+                iframe.allowFullscreen = true;
+                iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+                iframe.loading = 'lazy';
+                videoList.appendChild(p);
+                videoList.appendChild(iframe);
+            });
+        }
+
         // Salvar Live
         document.getElementById('save-live').addEventListener('click', () => {
             const link = document.getElementById('live-link').value.trim();
             if (link) {
                 localStorage.setItem('live-link', link);
-                loadFromLocal();
-                alert('Live salva no seu celular!');
+                loadMedia();
+                alert('Live salva com sucesso!');
                 document.getElementById('live-link').value = '';
+            } else {
+                alert('Coloque o link embed da live!');
             }
         });
 
@@ -210,9 +179,11 @@
                 let fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
                 fotos.push(url);
                 localStorage.setItem('fotos', JSON.stringify(fotos));
-                loadFromLocal();
-                alert('Foto adicionada no seu celular!');
+                loadMedia();
+                alert('Foto adicionada com sucesso!');
                 document.getElementById('foto-url').value = '';
+            } else {
+                alert('Coloque o link da imagem!');
             }
         });
 
@@ -222,12 +193,14 @@
             const title = document.getElementById('video-title').value.trim() || 'Sermão';
             if (url) {
                 let videos = JSON.parse(localStorage.getItem('videos') || '[]');
-                videos.push({url, title});
+                videos.push({url: url, title: title});
                 localStorage.setItem('videos', JSON.stringify(videos));
-                loadFromLocal();
-                alert('Vídeo adicionado no seu celular!');
+                loadMedia();
+                alert('Vídeo adicionado com sucesso!');
                 document.getElementById('video-url').value = '';
                 document.getElementById('video-title').value = '';
+            } else {
+                alert('Coloque o link embed do vídeo!');
             }
         });
 
@@ -249,27 +222,17 @@
 
         // Limpar tudo
         document.getElementById('remove-all').addEventListener('click', () => {
-            if (confirm('Limpar tudo no seu celular?')) {
+            if (confirm('Limpar tudo?')) {
                 localStorage.removeItem('live-link');
                 localStorage.removeItem('fotos');
                 localStorage.removeItem('videos');
-                loadFromLocal();
-                alert('Limpo no seu celular!');
+                loadMedia();
+                alert('Tudo limpo!');
             }
         });
 
-        // Abas
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tabBtns.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById(btn.dataset.tab).classList.add('active');
-            });
-        });
+        // Carrega ao abrir
+        loadMedia();
     </script>
 </body>
 </html>
