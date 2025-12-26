@@ -47,13 +47,6 @@
         </div>
     </section>
 
-    <!-- Banner de atualização PWA -->
-    <div id="update-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#e91e63; color:white; padding:15px; text-align:center; z-index:1000; font-size:14px;">
-        <p>Existem atualizações pendentes. Deseja atualizar agora?</p>
-        <button id="update-now" style="background:white; color:#e91e63; border:none; padding:10px 20px; margin:5px; cursor:pointer; font-weight:bold;">Atualizar</button>
-        <button id="update-later" style="background:transparent; color:white; border:1px solid white; padding:10px 20px; margin:5px; cursor:pointer;">Depois</button>
-    </div>
-
     <div id="adm-panel" class="adm-panel">
         <h3>Área Administrativa</h3>
         <button id="adm-close" style="position:absolute; top:10px; right:10px; background:none; border:none; color:white; font-size:2rem; cursor:pointer;">×</button>
@@ -61,7 +54,7 @@
         <button id="adm-login">Entrar</button>
         <div id="adm-content" style="display:none;">
             <h4>Live YouTube</h4>
-            <input type="text" id="live-link" placeholder="Link embed">
+            <input type="text" id="live-link" placeholder="Link embed (ex: https://www.youtube.com/embed/ID)">
             <button id="save-live">Salvar Live</button>
             
             <h4>Adicionar Foto</h4>
@@ -69,12 +62,9 @@
             <button id="add-foto">Adicionar Foto</button>
             
             <h4>Adicionar Vídeo</h4>
-            <input type="text" id="video-url" placeholder="Link embed">
+            <input type="text" id="video-url" placeholder="Link embed YouTube">
             <input type="text" id="video-title" placeholder="Título">
             <button id="add-video">Adicionar Vídeo</button>
-            
-            <h4>Sync em todos</h4>
-            <button id="generate-sync" style="background:#28a745; color:white;">Gerar código pra sync</button>
             
             <h4>Remover</h4>
             <button id="remove-all" style="background:#c2185b; color:white;">Limpar Tudo</button>
@@ -86,23 +76,65 @@
 
     <script src="script.js"></script>
     <script>
-        // LocalStorage pra ADM
+        // Abas da Mídia
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Área ADM - CORRIGIDO (agora funciona 100%)
+        const admBtn = document.getElementById('adm-btn');
+        const admPanel = document.getElementById('adm-panel');
+        const admClose = document.getElementById('adm-close');
+        const admPassword = document.getElementById('adm-password');
+        const admLogin = document.getElementById('adm-login');
+        const admContent = document.getElementById('adm-content');
+
+        admBtn.addEventListener('click', () => {
+            admPanel.style.display = 'block';
+        });
+
+        admClose.addEventListener('click', () => {
+            admPanel.style.display = 'none';
+        });
+
+        admLogin.addEventListener('click', () => {
+            if (admPassword.value === 'IEPC') {
+                admContent.style.display = 'block';
+                admPassword.value = '';
+            } else {
+                alert('Senha incorreta!');
+            }
+        });
+
+        // Carrega mídia salva (localStorage)
         function loadMedia() {
+            // Live
             const liveLink = localStorage.getItem('live-link') || '';
             if (liveLink) {
                 document.getElementById('live-frame').src = liveLink;
                 document.getElementById('no-live').style.display = 'none';
             }
 
+            // Fotos
             const gallery = document.getElementById('gallery');
             gallery.innerHTML = '';
             const fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
             fotos.forEach(url => {
                 const img = document.createElement('img');
                 img.src = url;
+                img.alt = 'Foto da igreja';
                 gallery.appendChild(img);
             });
 
+            // Vídeos
             const videoList = document.getElementById('video-list');
             videoList.innerHTML = '';
             const videos = JSON.parse(localStorage.getItem('videos') || '[]');
@@ -125,7 +157,7 @@
             if (link) {
                 localStorage.setItem('live-link', link);
                 loadMedia();
-                alert('Live salva!');
+                alert('Live salva com sucesso!');
                 document.getElementById('live-link').value = '';
             }
         });
@@ -138,8 +170,10 @@
                 fotos.push(url);
                 localStorage.setItem('fotos', JSON.stringify(fotos));
                 loadMedia();
-                alert('Foto adicionada!');
+                alert('Foto adicionada com sucesso!');
                 document.getElementById('foto-url').value = '';
+            } else {
+                alert('Coloque um link válido da imagem!');
             }
         });
 
@@ -152,26 +186,12 @@
                 videos.push({url, title});
                 localStorage.setItem('videos', JSON.stringify(videos));
                 loadMedia();
-                alert('Vídeo adicionado!');
+                alert('Vídeo adicionado com sucesso!');
                 document.getElementById('video-url').value = '';
                 document.getElementById('video-title').value = '';
+            } else {
+                alert('Coloque o link embed do vídeo!');
             }
-        });
-
-        // Gerar código pra sync
-        document.getElementById('generate-sync').addEventListener('click', () => {
-            const live = localStorage.getItem('live-link') || '';
-            const fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-
-            const data = {
-                live: live,
-                fotos: fotos,
-                videos: videos
-            };
-
-            const jsonString = JSON.stringify(data, null, 2);
-            prompt('Copie e cole no data.json no GitHub:', jsonString);
         });
 
         // Limpar tudo
@@ -185,42 +205,7 @@
             }
         });
 
-        // Área ADM (close, login, abas etc – mesmo de antes)
-
-        // PWA atualização
-        const updateBanner = document.getElementById('update-banner');
-        const updateNow = document.getElementById('update-now');
-        const updateLater = document.getElementById('update-later');
-
-        let newWorker;
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(reg => {
-                reg.addEventListener('updatefound', () => {
-                    newWorker = reg.installing;
-                    newWorker.addEventListener('statechange', () => {
-                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            updateBanner.style.display = 'block';
-                        }
-                    });
-                });
-            });
-
-            updateNow.addEventListener('click', () => {
-                if (newWorker) {
-                    newWorker.postMessage({action: 'skipWaiting'});
-                }
-            });
-
-            updateLater.addEventListener('click', () => {
-                updateBanner.style.display = 'none';
-            });
-
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                window.location.reload();
-            });
-        }
-
+        // Carrega ao abrir
         loadMedia();
     </script>
 </body>
