@@ -66,6 +66,9 @@
             <input type="text" id="video-title" placeholder="Título do vídeo">
             <button id="add-video">Adicionar Vídeo</button>
             
+            <h4>Sync em todos os celulares</h4>
+            <button id="generate-sync" style="background:#28a745; color:white;">Gerar código pra sync</button>
+            
             <h4>Remover</h4>
             <button id="remove-all" style="background:#c2185b; color:white;">Limpar Tudo</button>
         </div>
@@ -199,9 +202,25 @@
             }
         });
 
+        // Gerar código pra sync (volta o botão!)
+        document.getElementById('generate-sync').addEventListener('click', () => {
+            const live = localStorage.getItem('live-link') || '';
+            const fotos = JSON.parse(localStorage.getItem('fotos') || '[]');
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+
+            const data = {
+                live: live,
+                fotos: fotos,
+                videos: videos
+            };
+
+            const jsonString = JSON.stringify(data, null, 2);
+            prompt('Copie e cole no data.json no GitHub:', jsonString);
+        });
+
         // Limpar tudo
         document.getElementById('remove-all').addEventListener('click', () => {
-            if (confirm('Limpar tudo (live, fotos e vídeos)?')) {
+            if (confirm('Limpar tudo?')) {
                 localStorage.removeItem('live-link');
                 localStorage.removeItem('fotos');
                 localStorage.removeItem('videos');
