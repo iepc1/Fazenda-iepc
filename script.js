@@ -118,7 +118,7 @@ if ('Notification' in window && Notification.permission === 'default') {
 
 function notify(title, body) {
     if (Notification.permission === 'granted') {
-        new Notification(title, {body: body, icon: 'android-launchericon-192-192.png'});
+        new Notification(title, {body: body, icon: "android-launchericon-192-192.png"}); // Usa ícone local
     }
 }
 
